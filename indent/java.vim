@@ -23,12 +23,12 @@ setlocal cindent cinoptions& cinoptions+=j1
 setlocal indentkeys& indentkeys+=0=extends indentkeys+=0=implements indentkeys+=0=throws
 
 " Set the function to do the work.
-setlocal indentexpr=GetJavaIndent()
+setlocal indentexpr=GetJavaIndent2()
 
 let b:undo_indent = "set cin< cino< indentkeys< indentexpr<"
 
 " Only define the function once.
-if exists("*GetJavaIndent")
+if exists("*GetJavaIndent2")
   finish
 endif
 
@@ -57,13 +57,11 @@ function! SkipJavaBlanksAndComments(startline)
   return lnum
 endfunction
 
-function GetJavaIndent()
-  echom "reindenting"
-
+function GetJavaIndent2()
   " Java is just like C; use the built-in C indenting and then correct a few
   " specific cases.
   let theIndent = cindent(v:lnum)
-  echom "cindent amt:".theIndent
+  " echom "cindent amt:".theIndent
 
   " If we're in the middle of a comment then just trust cindent
   if getline(v:lnum) =~ '^\s*\*'
@@ -96,12 +94,12 @@ function GetJavaIndent()
     let theIndent = theIndent - shiftwidth()
   endif
 
-  echom "prevline:"getline(prev)
-  echom "lline:"getline(lnum)
+  " echom "prevline:"getline(prev)
+  " echom "lline:"getline(lnum)
   " correct for continuation lines of "throws", "implements" and "extends"
   let cont_kw = matchstr(getline(prev),
         \ '^\s*\zs\(throws\|implements\|extends\)\>\ze.*,\s*$')
-  echom "cont_kw:".cont_kw
+  " echom "cont_kw:".cont_kw
   if strlen(cont_kw) > 0
     let amount = strlen(cont_kw) + 1
     if getline(lnum) !~ ',\s*$'
